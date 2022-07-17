@@ -128,7 +128,7 @@ function love.load() --Loads assets
         {1, 0, 0},
         {0, 1, 0}
     }
-    if love.filesystem.exists("tetris.ogg") then
+    if love.filesystem.getInfo("tetris.ogg") then
         musicEnabled = true
         TETRIS = love.audio.newSource("tetris.ogg", "stream") --Tetris music
         volume = 0.17
