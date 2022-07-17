@@ -19,7 +19,9 @@ function getPiece()
     for _,s in pairs(currentPiece.squares) do
         if field[s.x][s.y] > 0 then
             gameOver = true
-            TETRIS:stop() --Stop music
+            if musicEnabled then
+                TETRIS:stop() --Stop music
+            end
             return
         end
     end
@@ -54,7 +56,9 @@ function newGame() --(re)sets the game state
     nextPiece = love.math.random(#pieces) --Generate random piece
     getPiece() --Create the piece
     updateShadow() --Update piece shadow
-    love.audio.play(TETRIS) --Restart music
+    if musicEnabled then
+        love.audio.play(TETRIS) --Restart music
+    end
 end
 function movePiece(piece, x, y)
     for _,s in pairs(piece.squares) do
@@ -124,10 +128,15 @@ function love.load() --Loads assets
         {1, 0, 0},
         {0, 1, 0}
     }
-    TETRIS = love.audio.newSource("tetris.ogg", "stream") --Tetris music
-    volume = 0.17
-    love.audio.setVolume(volume) --Sets volume to 0.17
-    TETRIS:setLooping(true) --Makes the music loop
+    if love.filesystem.exists("tetris.ogg") then
+        musicEnabled = true
+        TETRIS = love.audio.newSource("tetris.ogg", "stream") --Tetris music
+        volume = 0.17
+        love.audio.setVolume(volume) --Sets volume to 0.17
+        TETRIS:setLooping(true) --Makes the music loop
+    else
+        musicEnabled = false
+    end
     love.window.setTitle("Tetris!") --Sets the window title
     love.graphics.setBackgroundColor(1/4, 1/4, 1/4) --Sets the background color
     gamePaused = false --Not paused
@@ -164,7 +173,9 @@ function love.keypressed(key)
                 for _,s in pairs(currentPiece.squares) do
                     if field[s.x][s.y] > 0 then
                         gameOver = true
-                        TETRIS:stop()
+                        if musicEnabled then
+                            TETRIS:stop()
+                        end
                         return
                     end
                 end
@@ -215,8 +226,10 @@ function love.keypressed(key)
     if key == "s" then
         showScore = not showScore
     elseif key == "m" then
-        volume = volume - 2 * volume + 0.17
-        love.audio.setVolume(volume)
+        if musicEnabled then
+            volume = volume - 2 * volume + 0.17
+            love.audio.setVolume(volume)
+        end
     elseif key == "q" then
         squareWindow()
     elseif key == "r" then
