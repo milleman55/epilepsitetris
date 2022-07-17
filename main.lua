@@ -1,5 +1,5 @@
 --[[
-Copyright (c) 2016 Mauritz Sverredal
+Copyright (c) 2016-2022 Mauritz Sverredal
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
