@@ -7,6 +7,17 @@ notice and this notice are preserved.  This file is offered as-is,
 without any warranty.
 ]]--
 
+function refreshBag()
+	bag = {}
+	for i = 1, 7 do
+		bag[i] = i
+	end
+	for i = 1, 7 do
+		local r = love.math.random(i, 7)
+		bag[i], bag[r] = bag[r], bag[i]
+	end
+	return bag
+end
 function lockPiece(piece)
     for _,s in pairs(piece.squares) do
         field[s.x][s.y] = piece.color
@@ -14,7 +25,12 @@ function lockPiece(piece)
 end
 function getPiece()
     currentPiece = makePiece(nextPiece)
-    nextPiece = love.math.random(#pieces)
+    nextPiece = bag[1]
+	if #bag == 1 then
+		refreshBag()
+	else
+		table.remove(bag, 1)
+	end
     t = 0
     for _,s in pairs(currentPiece.squares) do
         if field[s.x][s.y] > 0 then
@@ -27,7 +43,6 @@ function getPiece()
     end
 end
 function newGame() --(re)sets the game state
-
     score = 0
     showScore = true --Show score on screen
 
@@ -53,8 +68,14 @@ function newGame() --(re)sets the game state
             table.insert(field[i], 0) --Fill field, and 3 tiles over with empty squares (0)
         end
     end
-    nextPiece = love.math.random(#pieces) --Generate random piece
-    getPiece() --Create the piece
+	refreshBag()
+    nextPiece = bag[1]
+	if #bag == 1 then
+		refreshBag()
+	else
+		table.remove(bag, 1) -- Get first piece from bag
+	end
+    getPiece() -- Create the piece
     updateShadow() --Update piece shadow
     if musicEnabled then
         love.audio.play(TETRIS) --Restart music
