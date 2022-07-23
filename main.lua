@@ -20,7 +20,10 @@ function refreshBag()
 end
 function lockPiece(piece)
     for _,s in pairs(piece.squares) do
-        field[s.x][s.y] = piece.color
+        field[s.x][s.y] = {
+            color = piece.color,
+            type = nil
+        }
     end
 end
 function getPiece()
@@ -33,7 +36,7 @@ function getPiece()
 	end
     t = 0
     for _,s in pairs(currentPiece.squares) do
-        if field[s.x][s.y] > 0 then
+        if field[s.x][s.y].color > 0 then
             gameOver = true
             if musicEnabled then
                 TETRIS:stop() --Stop music
@@ -65,7 +68,7 @@ function newGame() --(re)sets the game state
     for i = 1, field.width do
         field[i] = {} --Make columns
         for _ = 1, field.height + 3 do
-            table.insert(field[i], 0) --Fill field, and 3 tiles over with empty squares (0)
+            table.insert(field[i], {color = 0, type = nil}) --Fill field, and 3 tiles over with empty squares (0)
         end
     end
 	refreshBag()
@@ -83,7 +86,7 @@ function newGame() --(re)sets the game state
 end
 function movePiece(piece, x, y)
     for _,s in pairs(piece.squares) do
-        if s.y - y < 1 or s.x + x < 1 or s.x + x > field.width or field[s.x + x][s.y - y] > 0 or field[s.x][s.y] > 0 then
+        if s.y - y < 1 or s.x + x < 1 or s.x + x > field.width or field[s.x + x][s.y - y].color > 0 or field[s.x][s.y].color > 0 then
             return true
         end
     end
@@ -192,7 +195,7 @@ function love.keypressed(key)
                     getPiece()
                 end
                 for _,s in pairs(currentPiece.squares) do
-                    if field[s.x][s.y] > 0 then
+                    if field[s.x][s.y].color > 0 then
                         gameOver = true
                         if musicEnabled then
                             TETRIS:stop()
@@ -213,7 +216,7 @@ function love.keypressed(key)
         elseif key == "z" then 
             canSpin = true
             for _,s in pairs(currentPiece.squares) do
-                if (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1 or (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width or ((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1 or field[(-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY] > 0 then
+                if (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1 or (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width or ((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1 or field[(-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].color > 0 then
                     canSpin = false
                 end
             end
@@ -229,7 +232,7 @@ function love.keypressed(key)
         elseif key == "x" then 
             canSpin = true
             for _,s in pairs(currentPiece.squares) do
-                if ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1 or ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width or (-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1 or field[((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][(-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY] > 0 then
+                if ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1 or ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width or (-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1 or field[((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][(-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].color > 0 then
                     canSpin = false
                 end
             end
@@ -282,7 +285,7 @@ function checkLines()
     for l = 1, field.height do
         clearLine = true
         for i = 1, field.width do
-            if field[i][field.height + 1 - l] < 1 then
+            if field[i][field.height + 1 - l].color < 1 then
                 clearLine = false
                 break
             end
@@ -305,8 +308,11 @@ function updateShadow()
     shadow.color = -1
     for i = 1, field.width do
         for l = 1, field.height do
-            if field[i][l] == -1 then
-                field[i][l] = 0
+            if field[i][l].color == -1 then
+                field[i][l] = {
+                    color = 0,
+                    type = nil
+                }
             end
         end
     end
@@ -318,8 +324,6 @@ function updateShadow()
     lockPiece(shadow)
 end
 function love.draw()
-    --love.graphics.setColor(0.33, 0.33, 0.33)
-    --love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
     love.graphics.translate(love.graphics.getWidth() / 2 - squareSize * (field.width / 2), (squareSize * field.height + love.graphics.getHeight()) / 2)
     love.graphics.scale(1, -1)
     love.graphics.setColor(0, 0, 0)
@@ -327,14 +331,14 @@ function love.draw()
     if not gamePaused then
         for i = 1, field.width do
             for l = 1, #field[i] - 3 do
-                if field[i][l] == -1 then
+                if field[i][l].color == -1 then
                     shadowBorderPx = math.ceil(shadowBorder * squareSize)
                     love.graphics.setColor(pieceColors[currentPiece.color])
                     love.graphics.rectangle("fill", (i - 1) * squareSize, (l - 1) * squareSize, squareSize, squareSize)
                     love.graphics.setColor(0, 0, 0)
                     love.graphics.rectangle("fill", (i - 1) * squareSize + shadowBorderPx, (l - 1) * squareSize + shadowBorderPx, squareSize - 2 * shadowBorderPx, squareSize - 2 * shadowBorderPx)
-                elseif field[i][l] > 0 then
-                    love.graphics.setColor(pieceColors[field[i][l]])
+                elseif field[i][l].color > 0 then
+                    love.graphics.setColor(pieceColors[field[i][l].color])
                     love.graphics.rectangle("fill", (i - 1) * squareSize, (l - 1) * squareSize, squareSize, squareSize)
                 end
             end
