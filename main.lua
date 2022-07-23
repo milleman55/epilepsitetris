@@ -27,7 +27,7 @@ function lockPiece(piece)
     end
 end
 function getPiece()
-    currentPiece = makePiece(nextPiece)
+    currentPiece = makePiece(nextPiece, false)
     nextPiece = bag[1]
 	if #bag == 1 then
 		refreshBag()
@@ -119,13 +119,19 @@ function squareWindow()
     text1x = love.graphics.newFont(squareSize)
     text2x = love.graphics.newFont(squareSize * 2)
 end
-function makePiece(id)
+function makePiece(id, isShadow)
     local piece = {}
     piece.squares = {}
     for i,s in ipairs(pieces[id]) do
         piece.squares[i] = {}
         piece.squares[i].y = s.y + field.height - 2
         piece.squares[i].x = s.x + math.ceil(field.width / 2) - 2
+        piece.squares[i].color = pieces[id].color
+        if isShadow then
+            piece.squares[i].type = "shadow"
+        else
+            piece.squares[i].type = 0
+        end
     end
     piece.rotatePointY = field.height - 2 + pieces[id].rotateY
     piece.rotatePointX = math.ceil(field.width / 2) - 2 + pieces[id].rotateX
@@ -188,7 +194,7 @@ function love.keypressed(key)
             if not hasHeld then
                 local id = currentPiece.id
                 if #heldPiece.squares > 0 then
-                    currentPiece = makePiece(heldPiece.id)
+                    currentPiece = makePiece(heldPiece.id, false)
                     heldPiece = makePiece(id)
                 else
                     heldPiece = makePiece(id)
@@ -304,7 +310,7 @@ function checkLines()
     end
 end
 function updateShadow()
-    shadow = makePiece(currentPiece.id)
+    shadow = makePiece(currentPiece.id, true)
     shadow.color = -1
     for i = 1, field.width do
         for l = 1, field.height do
@@ -371,7 +377,7 @@ function love.draw()
     end
     if showScore == true then
         if gamePaused == false then
-            nextPiecePiece = makePiece(nextPiece)
+            nextPiecePiece = makePiece(nextPiece, false)
             for _,s in pairs(nextPiecePiece.squares) do
                 love.graphics.setColor(pieceColors[nextPiecePiece.color])
                 love.graphics.rectangle("fill", (((-(s.y - math.floor(nextPiecePiece.rotatePointY))) + math.ceil(nextPiecePiece.rotatePointX)) + (field.width / 2 + 1)) * squareSize, ((((s.x - math.ceil(nextPiecePiece.rotatePointX))) + math.ceil(nextPiecePiece.rotatePointY)) - field.height / 2) * squareSize, squareSize, squareSize)
