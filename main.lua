@@ -43,9 +43,9 @@ function getPiece()
         end
     end
 end
-function newGame() --(re)sets the game state
+function newGame() -- (re)sets the game state
     score = 0
-    showScore = true --Show score on screen
+    showScore = true -- Show score on screen
 
     t = 0 --Reset time
 
@@ -54,7 +54,7 @@ function newGame() --(re)sets the game state
     hasHeld = false
     heldPiece = {
         squares = {}
-    } --No held piece
+    } -- No held piece
 
     shadowBorder = 0.05 -- As part of square size
     cornerRadius = 0.3 -- As part of square size
@@ -62,12 +62,13 @@ function newGame() --(re)sets the game state
     field = {
         width = 10,
         height = 20,
-    } --Dimensions of playing field
+    } -- Dimensions of playing field
 
     for i = 1, field.width do
-        field[i] = {} --Make columns
+        field[i] = {} -- Columns
         for _ = 1, field.height + 3 do
-            table.insert(field[i], {color = 0, type = "empty"}) --Fill field, and 3 tiles over with empty squares (0)
+            -- Fill field, and a margin of 3 rows above with empty squares
+            table.insert(field[i], {color = 0, type = "empty"})
         end
     end
 	refreshBag()
@@ -78,9 +79,9 @@ function newGame() --(re)sets the game state
 		table.remove(bag, 1) -- Get first piece from bag
 	end
     getPiece() -- Create the piece
-    updateShadow() --Update piece shadow
+    updateShadow()
     if musicEnabled then
-        love.audio.play(TETRIS) --Restart music
+        love.audio.play(TETRIS) -- Restart music
     end
 end
 function movePiece(piece, x, y)
@@ -140,17 +141,17 @@ function makePiece(id, isShadow)
     piece.id = id
     return(piece)
 end
-function love.load() --Loads assets
-    pieces = { --The different tetrominoes
-        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=1, shape="end", rotation=1}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="end", rotation=2}, color = 1, rotateX = 2, rotateY = 2}, --T Piece
-        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="full", rotation=0}, {x=4, y=2, shape="end", rotation=2}, color = 2, rotateX = 2.5, rotateY = 2.5}, --Line Piece
-        {{x=2, y=1, shape="corner", rotation=0}, {x=3, y=1, shape="corner", rotation=1}, {x=2, y=2, shape="corner", rotation=3}, {x=3, y=2, shape="corner", rotation=2}, color = 3, rotateX = 2.5, rotateY = 1.5}, --Square Piece
-        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="corner", rotation=2}, {x=3, y=1, shape="end", rotation=1}, color = 4, rotateX = 2, rotateY = 2}, --J Piece
-        {{x=1, y=1, shape="end", rotation=1}, {x=2, y=2, shape="full", rotation=0}, {x=1, y=2, shape="corner", rotation=3}, {x=3, y=2, shape="end", rotation=2}, color = 5, rotateX = 2, rotateY = 2}, --L Piece
-        {{x=2, y=2, shape="corner", rotation=2}, {x=2, y=1, shape="corner", rotation=0}, {x=1, y=2, shape="end", rotation=0}, {x=3, y=1, shape="end", rotation=2}, color = 6, rotateX = 2, rotateY = 2}, --Z Piece
-        {{x=2, y=2, shape="corner", rotation=3}, {x=2, y=1, shape="corner", rotation=1}, {x=1, y=1, shape="end", rotation=0}, {x=3, y=2, shape="end", rotation=2}, color = 7, rotateX = 2, rotateY = 2}, --S Piece
+function love.load()
+    pieces = { -- The different tetrominoes
+        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=1, shape="end", rotation=1}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="end", rotation=2}, color = 1, rotateX = 2, rotateY = 2}, -- T Piece
+        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="full", rotation=0}, {x=4, y=2, shape="end", rotation=2}, color = 2, rotateX = 2.5, rotateY = 2.5}, -- Line Piece
+        {{x=2, y=1, shape="corner", rotation=0}, {x=3, y=1, shape="corner", rotation=1}, {x=2, y=2, shape="corner", rotation=3}, {x=3, y=2, shape="corner", rotation=2}, color = 3, rotateX = 2.5, rotateY = 1.5}, -- Square Piece
+        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="corner", rotation=2}, {x=3, y=1, shape="end", rotation=1}, color = 4, rotateX = 2, rotateY = 2}, -- J Piece
+        {{x=1, y=1, shape="end", rotation=1}, {x=2, y=2, shape="full", rotation=0}, {x=1, y=2, shape="corner", rotation=3}, {x=3, y=2, shape="end", rotation=2}, color = 5, rotateX = 2, rotateY = 2}, -- L Piece
+        {{x=2, y=2, shape="corner", rotation=2}, {x=2, y=1, shape="corner", rotation=0}, {x=1, y=2, shape="end", rotation=0}, {x=3, y=1, shape="end", rotation=2}, color = 6, rotateX = 2, rotateY = 2}, -- Z Piece
+        {{x=2, y=2, shape="corner", rotation=3}, {x=2, y=1, shape="corner", rotation=1}, {x=1, y=1, shape="end", rotation=0}, {x=3, y=2, shape="end", rotation=2}, color = 7, rotateX = 2, rotateY = 2}, -- S Piece
     }
-    pieceColors = { --The piece colors
+    pieceColors = { -- The piece colors
         {1,   0,     1   },
         {0.5, 0.667, 1   },
         {1,   1,     0   },
@@ -161,18 +162,18 @@ function love.load() --Loads assets
     }
     if love.filesystem.getInfo("tetris.ogg") then
         musicEnabled = true
-        TETRIS = love.audio.newSource("tetris.ogg", "stream") --Tetris music
+        TETRIS = love.audio.newSource("tetris.ogg", "stream") -- Load music file
         volume = 0.17
-        love.audio.setVolume(volume) --Sets volume to 0.17
-        TETRIS:setLooping(true) --Makes the music loop
+        love.audio.setVolume(volume)
+        TETRIS:setLooping(true)
     else
         musicEnabled = false
     end
-    love.window.setTitle("Tetris!") --Sets the window title
-    love.graphics.setBackgroundColor(1/4, 1/4, 1/4) --Sets the background color
-    gamePaused = false --Not paused
+    love.window.setTitle("Tetris!")
+    love.graphics.setBackgroundColor(1/4, 1/4, 1/4)
+    gamePaused = false
     newGame()
-    squareWindow() --Fix window size and aspect ratio
+    squareWindow() -- Fix window size and aspect ratio
 end
 function love.resize()
     if love.graphics.getWidth() / (field.width + 8) > love.graphics.getHeight() / field.height then
@@ -333,7 +334,6 @@ function updateShadow()
 end
 function drawSquare(square, x, y)
     love.graphics.translate(x, y)
---    print(square.type, square.color, x, y)
     if square.type == "shadow" then
         shadowBorderPx = math.ceil(shadowBorder * squareSize)
         love.graphics.setColor(pieceColors[square.color])
