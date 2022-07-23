@@ -192,7 +192,7 @@ function rotateHeldPiece(direction)
                 (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1
                 or (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width
                 or ((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1
-                or field[(-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].color > 0
+                or field[(-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].type == "normal"
             then
                 canSpin = false
             end
@@ -214,7 +214,7 @@ function rotateHeldPiece(direction)
                 ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1
                 or ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width
                 or (-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1
-                or field[((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][(-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].color > 0
+                or field[((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][(-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].type == "normal"
             then
                 canSpin = false
             end
