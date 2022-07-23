@@ -151,13 +151,13 @@ function love.load() --Loads assets
         {{x=2, y=2}, {x=2, y=1}, {x=1, y=1}, {x=3, y=2}, color = 7, rotateX = 2, rotateY = 2}, --S Piece
     }
     pieceColors = { --The piece colors
-        {1, 0, 1},
-        {0.5, 170/255, 1},
-        {1, 1, 0},
-        {0, 0, 0.75},
-        {1, 2/3, 0},
-        {1, 0, 0},
-        {0, 1, 0}
+        {1,   0,     1   },
+        {0.5, 0.667, 1   },
+        {1,   1,     0   },
+        {0,   0,     0.75},
+        {1,   0.667, 0   },
+        {1,   0,     0   },
+        {0,   1,     0   }
     }
     if love.filesystem.getInfo("tetris.ogg") then
         musicEnabled = true
