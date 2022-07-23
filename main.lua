@@ -184,6 +184,53 @@ function love.resize()
     text1x = love.graphics.newFont(squareSize)
     text2x = love.graphics.newFont(squareSize * 2)
 end
+function rotateHeldPiece(direction)
+    if direction == 1 then
+        canSpin = true
+        for _,s in pairs(currentPiece.squares) do
+            if
+                (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1
+                or (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width
+                or ((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1
+                or field[(-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].color > 0
+            then
+                canSpin = false
+            end
+        end
+        if canSpin == true then
+            for _,s in pairs(currentPiece.squares) do
+                local storedX = s.x
+                local storedY = s.y
+                s.x = (-(storedY - currentPiece.rotatePointY)) + currentPiece.rotatePointX
+                s.y = ((storedX - currentPiece.rotatePointX)) + currentPiece.rotatePointY
+                s.rotation = (s.rotation + 1) % 4
+            end
+            updateShadow()
+        end
+    else
+        canSpin = true
+        for _,s in pairs(currentPiece.squares) do
+            if
+                ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1
+                or ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width
+                or (-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1
+                or field[((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][(-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].color > 0
+            then
+                canSpin = false
+            end
+        end
+        if canSpin == true then
+            for _,s in pairs(currentPiece.squares) do
+                local storedX = s.x
+                local storedY = s.y
+                s.x = ((storedY - currentPiece.rotatePointY)) + currentPiece.rotatePointX
+                s.y = (-(storedX - currentPiece.rotatePointX)) + currentPiece.rotatePointY
+                s.rotation = (s.rotation - 1) % 4
+            end
+            updateShadow()
+        end
+    end
+end
 function love.keypressed(key)
     if gameOver == false and gamePaused == false then
         if key == "left" then
@@ -221,40 +268,10 @@ function love.keypressed(key)
             getPiece()
             updateShadow()
             hasHeld = false
-        elseif key == "z" then 
-            canSpin = true
-            for _,s in pairs(currentPiece.squares) do
-                if (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1 or (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width or ((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1 or field[(-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].color > 0 then
-                    canSpin = false
-                end
-            end
-            if canSpin == true then
-                for _,s in pairs(currentPiece.squares) do
-                    local storedX = s.x
-                    local storedY = s.y
-                    s.x = (-(storedY - currentPiece.rotatePointY)) + currentPiece.rotatePointX
-                    s.y = ((storedX - currentPiece.rotatePointX)) + currentPiece.rotatePointY
-                    s.rotation = (s.rotation + 1) % 4
-                end
-                updateShadow()
-            end
+        elseif key == "z" then
+            rotateHeldPiece(1)
         elseif key == "x" then 
-            canSpin = true
-            for _,s in pairs(currentPiece.squares) do
-                if ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1 or ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width or (-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1 or field[((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][(-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].color > 0 then
-                    canSpin = false
-                end
-            end
-            if canSpin == true then
-                for _,s in pairs(currentPiece.squares) do
-                    local storedX = s.x
-                    local storedY = s.y
-                    s.x = ((storedY - currentPiece.rotatePointY)) + currentPiece.rotatePointX
-                    s.y = (-(storedX - currentPiece.rotatePointX)) + currentPiece.rotatePointY
-                    s.rotation = (s.rotation - 1) % 4
-                end
-                updateShadow()
-            end
+            rotateHeldPiece(-1)
         end
     end
     if key == "s" then
