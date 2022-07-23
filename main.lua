@@ -323,28 +323,31 @@ function updateShadow()
     while not (movePiece(shadow, 0, 1)) do end
     lockPiece(shadow)
 end
-function love.draw()
-    love.graphics.translate(love.graphics.getWidth() / 2 - squareSize * (field.width / 2), (squareSize * field.height + love.graphics.getHeight()) / 2)
-    love.graphics.scale(1, -1)
+function drawField(x0, y0)
     love.graphics.setColor(0, 0, 0)
     love.graphics.rectangle("fill", 0, 0, field.width * squareSize, field.height * squareSize)
-    if not gamePaused then
-        for i = 1, field.width do
-            for l = 1, #field[i] - 3 do
-                if field[i][l].color == -1 then
-                    shadowBorderPx = math.ceil(shadowBorder * squareSize)
-                    love.graphics.setColor(pieceColors[currentPiece.color])
-                    love.graphics.rectangle("fill", (i - 1) * squareSize, (l - 1) * squareSize, squareSize, squareSize)
-                    love.graphics.setColor(0, 0, 0)
-                    love.graphics.rectangle("fill", (i - 1) * squareSize + shadowBorderPx, (l - 1) * squareSize + shadowBorderPx, squareSize - 2 * shadowBorderPx, squareSize - 2 * shadowBorderPx)
-                elseif field[i][l].color > 0 then
-                    love.graphics.setColor(pieceColors[field[i][l].color])
-                    love.graphics.rectangle("fill", (i - 1) * squareSize, (l - 1) * squareSize, squareSize, squareSize)
-                end
+    for i = 1, field.width do
+        for l = 1, #field[i] - 3 do
+            if field[i][l].color == -1 then
+                shadowBorderPx = math.ceil(shadowBorder * squareSize)
+                love.graphics.setColor(pieceColors[currentPiece.color])
+                love.graphics.rectangle("fill", (i - 1) * squareSize, (l - 1) * squareSize, squareSize, squareSize)
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.rectangle("fill", (i - 1) * squareSize + shadowBorderPx, (l - 1) * squareSize + shadowBorderPx, squareSize - 2 * shadowBorderPx, squareSize - 2 * shadowBorderPx)
+            elseif field[i][l].color > 0 then
+                love.graphics.setColor(pieceColors[field[i][l].color])
+                love.graphics.rectangle("fill", (i - 1) * squareSize, (l - 1) * squareSize, squareSize, squareSize)
             end
         end
     end
-    if gamePaused == false then
+end
+function love.draw()
+    fieldOffsetX = love.graphics.getWidth() / 2 - squareSize * (field.width / 2)
+    fieldOffsetY = (squareSize * field.height + love.graphics.getHeight()) / 2
+    love.graphics.translate(fieldOffsetX, fieldOffsetY)
+    love.graphics.scale(1, -1)
+    if not gamePaused then
+        drawField(0, 0)
         love.graphics.setColor(pieceColors[currentPiece.color])
         for _,s in pairs(currentPiece.squares) do   
             love.graphics.rectangle("fill", (s.x - 1) * squareSize, (s.y - 1) * squareSize, squareSize, squareSize)
