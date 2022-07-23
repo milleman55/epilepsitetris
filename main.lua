@@ -20,9 +20,10 @@ function refreshBag()
 end
 function lockPiece(piece)
     for _,s in pairs(piece.squares) do
+        print(s.x, s.y, s.type)
         field[s.x][s.y] = {
             color = piece.color,
-            type = nil
+            type = s.type
         }
     end
 end
@@ -86,7 +87,7 @@ function newGame() --(re)sets the game state
 end
 function movePiece(piece, x, y)
     for _,s in pairs(piece.squares) do
-        if s.y - y < 1 or s.x + x < 1 or s.x + x > field.width or field[s.x + x][s.y - y].color > 0 or field[s.x][s.y].color > 0 then
+        if s.y - y < 1 or s.x + x < 1 or s.x + x > field.width or field[s.x + x][s.y - y].type and field[s.x + x][s.y - y].type ~= "shadow" or field[s.x][s.y].type and field[s.x][s.y].type ~= "shadow" then
             return true
         end
     end
@@ -311,10 +312,9 @@ function checkLines()
 end
 function updateShadow()
     shadow = makePiece(currentPiece.id, true)
-    shadow.color = -1
     for i = 1, field.width do
         for l = 1, field.height do
-            if field[i][l].color == -1 then
+            if field[i][l].type == "shadow" then
                 field[i][l] = {
                     color = 0,
                     type = nil
@@ -329,6 +329,19 @@ function updateShadow()
     while not (movePiece(shadow, 0, 1)) do end
     lockPiece(shadow)
 end
+function drawSquare(square, x, y)
+--    print(square.type, square.color, x, y)
+    if square.type == "shadow" then
+        shadowBorderPx = math.ceil(shadowBorder * squareSize)
+        love.graphics.setColor(pieceColors[square.color])
+        love.graphics.rectangle("fill", x, y, squareSize, squareSize)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.rectangle("fill", x + shadowBorderPx, y + shadowBorderPx, squareSize - 2 * shadowBorderPx, squareSize - 2 * shadowBorderPx)
+    else
+        love.graphics.setColor(pieceColors[square.color])
+        love.graphics.rectangle("fill", x, y, squareSize, squareSize)
+    end
+end
 function drawField(x0, y0)
     love.graphics.translate(x0, y0)
     love.graphics.scale(1, -1)
@@ -336,15 +349,8 @@ function drawField(x0, y0)
     love.graphics.rectangle("fill", 0, 0, field.width * squareSize, field.height * squareSize)
     for i = 1, field.width do
         for l = 1, #field[i] - 3 do
-            if field[i][l].color == -1 then
-                shadowBorderPx = math.ceil(shadowBorder * squareSize)
-                love.graphics.setColor(pieceColors[currentPiece.color])
-                love.graphics.rectangle("fill", (i - 1) * squareSize, (l - 1) * squareSize, squareSize, squareSize)
-                love.graphics.setColor(0, 0, 0)
-                love.graphics.rectangle("fill", (i - 1) * squareSize + shadowBorderPx, (l - 1) * squareSize + shadowBorderPx, squareSize - 2 * shadowBorderPx, squareSize - 2 * shadowBorderPx)
-            elseif field[i][l].color > 0 then
-                love.graphics.setColor(pieceColors[field[i][l].color])
-                love.graphics.rectangle("fill", (i - 1) * squareSize, (l - 1) * squareSize, squareSize, squareSize)
+            if field[i][l].color ~= 0 then
+                drawSquare(field[i][l], (i-1)*squareSize, (l-1)*squareSize)
             end
         end
     end
