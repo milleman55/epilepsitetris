@@ -37,7 +37,7 @@ function getPiece()
         if field[s.x][s.y].color > 0 then
             gameOver = true
             if musicEnabled then
-                TETRIS:stop() --Stop music
+                TETRIS:stop() -- Stop music
             end
             return
         end
