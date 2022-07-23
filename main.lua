@@ -378,7 +378,7 @@ function love.draw()
     else
         love.graphics.origin()
         love.graphics.setFont(text2x)
-        love.graphics.setColor(255, 0, 255)
+        love.graphics.setColor(1, 0, 1)
         love.graphics.print("Paused", squareSize, squareSize * (field.height / 2 - 3))
     end
     if showScore == true then
