@@ -324,6 +324,8 @@ function updateShadow()
     lockPiece(shadow)
 end
 function drawField(x0, y0)
+    love.graphics.translate(x0, y0)
+    love.graphics.scale(1, -1)
     love.graphics.setColor(0, 0, 0)
     love.graphics.rectangle("fill", 0, 0, field.width * squareSize, field.height * squareSize)
     for i = 1, field.width do
@@ -340,18 +342,27 @@ function drawField(x0, y0)
             end
         end
     end
+    love.graphics.scale(1, -1)
+    love.graphics.translate(-x0, -y0)
 end
-function love.draw()
-    fieldOffsetX = love.graphics.getWidth() / 2 - squareSize * (field.width / 2)
-    fieldOffsetY = (squareSize * field.height + love.graphics.getHeight()) / 2
+function drawCurrentPiece(fieldOffsetX, fieldOffsetY)
     love.graphics.translate(fieldOffsetX, fieldOffsetY)
     love.graphics.scale(1, -1)
+    love.graphics.setColor(pieceColors[currentPiece.color])
+    for _,s in pairs(currentPiece.squares) do
+        love.graphics.rectangle("fill", (s.x - 1) * squareSize, (s.y - 1) * squareSize, squareSize, squareSize)
+    end
+    love.graphics.scale(1, -1)
+    love.graphics.translate(-fieldOffsetX, -fieldOffsetY)
+end
+function love.draw()
+    local fieldOffsetX = love.graphics.getWidth() / 2 - squareSize * (field.width / 2)
+    local fieldOffsetY = (squareSize * field.height + love.graphics.getHeight()) / 2
     if not gamePaused then
-        drawField(0, 0)
-        love.graphics.setColor(pieceColors[currentPiece.color])
-        for _,s in pairs(currentPiece.squares) do   
-            love.graphics.rectangle("fill", (s.x - 1) * squareSize, (s.y - 1) * squareSize, squareSize, squareSize)
-        end
+        drawField(fieldOffsetX, fieldOffsetY)
+        drawCurrentPiece(fieldOffsetX, fieldOffsetY)
+        love.graphics.translate(fieldOffsetX, fieldOffsetY)
+        love.graphics.scale(1, -1)
     else
         love.graphics.origin()
         love.graphics.setFont(text2x)
