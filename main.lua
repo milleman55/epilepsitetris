@@ -21,10 +21,7 @@ end
 function lockPiece(piece)
     for _,s in pairs(piece.squares) do
         print(s.x, s.y, s.type)
-        field[s.x][s.y] = {
-            color = piece.color,
-            type = s.type
-        }
+        field[s.x][s.y] = s
     end
 end
 function getPiece()
@@ -59,7 +56,8 @@ function newGame() --(re)sets the game state
         squares = {}
     } --No held piece
 
-    shadowBorder = 0.05 --As part of square size
+    shadowBorder = 0.05 -- As part of square size
+    cornerRadius = 0.3 -- As part of square size
 
     field = {
         width = 10,
@@ -69,7 +67,7 @@ function newGame() --(re)sets the game state
     for i = 1, field.width do
         field[i] = {} --Make columns
         for _ = 1, field.height + 3 do
-            table.insert(field[i], {color = 0, type = nil}) --Fill field, and 3 tiles over with empty squares (0)
+            table.insert(field[i], {color = 0, type = "empty"}) --Fill field, and 3 tiles over with empty squares (0)
         end
     end
 	refreshBag()
@@ -87,7 +85,7 @@ function newGame() --(re)sets the game state
 end
 function movePiece(piece, x, y)
     for _,s in pairs(piece.squares) do
-        if s.y - y < 1 or s.x + x < 1 or s.x + x > field.width or field[s.x + x][s.y - y].type and field[s.x + x][s.y - y].type ~= "shadow" or field[s.x][s.y].type and field[s.x][s.y].type ~= "shadow" then
+        if s.y - y < 1 or s.x + x < 1 or s.x + x > field.width or field[s.x + x][s.y - y].type == "normal" or field[s.x][s.y].type == "normal" then
             return true
         end
     end
@@ -128,10 +126,12 @@ function makePiece(id, isShadow)
         piece.squares[i].y = s.y + field.height - 2
         piece.squares[i].x = s.x + math.ceil(field.width / 2) - 2
         piece.squares[i].color = pieces[id].color
+        piece.squares[i].shape = s.shape
+        piece.squares[i].rotation = s.rotation
         if isShadow then
             piece.squares[i].type = "shadow"
         else
-            piece.squares[i].type = 0
+            piece.squares[i].type = "normal"
         end
     end
     piece.rotatePointY = field.height - 2 + pieces[id].rotateY
@@ -142,13 +142,13 @@ function makePiece(id, isShadow)
 end
 function love.load() --Loads assets
     pieces = { --The different tetrominoes
-        {{x=1, y=2}, {x=2, y=1}, {x=2, y=2}, {x=3, y=2}, color = 1, rotateX = 2, rotateY = 2}, --T Piece
-        {{x=1, y=2}, {x=2, y=2}, {x=3, y=2}, {x=4, y=2}, color = 2, rotateX = 2.5, rotateY = 2.5}, --Line Piece
-        {{x=2, y=1}, {x=3, y=1}, {x=2, y=2}, {x=3, y=2}, color = 3, rotateX = 2.5, rotateY = 1.5}, --Square Piece
-        {{x=1, y=2}, {x=2, y=2}, {x=3, y=2}, {x=3, y=1}, color = 4, rotateX = 2, rotateY = 2}, --J Piece
-        {{x=1, y=1}, {x=2, y=2}, {x=1, y=2}, {x=3, y=2}, color = 5, rotateX = 2, rotateY = 2}, --L Piece
-        {{x=2, y=2}, {x=2, y=1}, {x=1, y=2}, {x=3, y=1}, color = 6, rotateX = 2, rotateY = 2}, --Z Piece
-        {{x=2, y=2}, {x=2, y=1}, {x=1, y=1}, {x=3, y=2}, color = 7, rotateX = 2, rotateY = 2}, --S Piece
+        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=1, shape="end", rotation=1}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="end", rotation=2}, color = 1, rotateX = 2, rotateY = 2}, --T Piece
+        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="full", rotation=0}, {x=4, y=2, shape="end", rotation=2}, color = 2, rotateX = 2.5, rotateY = 2.5}, --Line Piece
+        {{x=2, y=1, shape="corner", rotation=0}, {x=3, y=1, shape="corner", rotation=1}, {x=2, y=2, shape="corner", rotation=3}, {x=3, y=2, shape="corner", rotation=2}, color = 3, rotateX = 2.5, rotateY = 1.5}, --Square Piece
+        {{x=1, y=2, shape="end", rotation=0}, {x=2, y=2, shape="full", rotation=0}, {x=3, y=2, shape="corner", rotation=2}, {x=3, y=1, shape="end", rotation=1}, color = 4, rotateX = 2, rotateY = 2}, --J Piece
+        {{x=1, y=1, shape="end", rotation=1}, {x=2, y=2, shape="full", rotation=0}, {x=1, y=2, shape="corner", rotation=3}, {x=3, y=2, shape="end", rotation=2}, color = 5, rotateX = 2, rotateY = 2}, --L Piece
+        {{x=2, y=2, shape="corner", rotation=2}, {x=2, y=1, shape="corner", rotation=0}, {x=1, y=2, shape="end", rotation=0}, {x=3, y=1, shape="end", rotation=2}, color = 6, rotateX = 2, rotateY = 2}, --Z Piece
+        {{x=2, y=2, shape="corner", rotation=3}, {x=2, y=1, shape="corner", rotation=1}, {x=1, y=1, shape="end", rotation=0}, {x=3, y=2, shape="end", rotation=2}, color = 7, rotateX = 2, rotateY = 2}, --S Piece
     }
     pieceColors = { --The piece colors
         {1,   0,     1   },
@@ -233,6 +233,7 @@ function love.keypressed(key)
                     local storedY = s.y
                     s.x = (-(storedY - currentPiece.rotatePointY)) + currentPiece.rotatePointX
                     s.y = ((storedX - currentPiece.rotatePointX)) + currentPiece.rotatePointY
+                    s.rotation = (s.rotation + 1) % 4
                 end
                 updateShadow()
             end
@@ -249,6 +250,7 @@ function love.keypressed(key)
                     local storedY = s.y
                     s.x = ((storedY - currentPiece.rotatePointY)) + currentPiece.rotatePointX
                     s.y = (-(storedX - currentPiece.rotatePointX)) + currentPiece.rotatePointY
+                    s.rotation = (s.rotation - 1) % 4
                 end
                 updateShadow()
             end
@@ -317,7 +319,7 @@ function updateShadow()
             if field[i][l].type == "shadow" then
                 field[i][l] = {
                     color = 0,
-                    type = nil
+                    type = "empty"
                 }
             end
         end
@@ -330,17 +332,36 @@ function updateShadow()
     lockPiece(shadow)
 end
 function drawSquare(square, x, y)
+    love.graphics.translate(x, y)
 --    print(square.type, square.color, x, y)
     if square.type == "shadow" then
         shadowBorderPx = math.ceil(shadowBorder * squareSize)
         love.graphics.setColor(pieceColors[square.color])
-        love.graphics.rectangle("fill", x, y, squareSize, squareSize)
+        love.graphics.rectangle("fill", 0, 0, squareSize, squareSize)
         love.graphics.setColor(0, 0, 0)
-        love.graphics.rectangle("fill", x + shadowBorderPx, y + shadowBorderPx, squareSize - 2 * shadowBorderPx, squareSize - 2 * shadowBorderPx)
+        love.graphics.rectangle("fill", shadowBorderPx, shadowBorderPx, squareSize - 2 * shadowBorderPx, squareSize - 2 * shadowBorderPx)
     else
+        love.graphics.translate(squareSize/2, squareSize/2)
+        love.graphics.rotate(square.rotation*math.pi/2)
+        love.graphics.translate(-squareSize/2, -squareSize/2)
         love.graphics.setColor(pieceColors[square.color])
-        love.graphics.rectangle("fill", x, y, squareSize, squareSize)
+        if square.shape == "end" then
+            love.graphics.rectangle("fill", cornerRadius*squareSize, 0, (1-cornerRadius)*squareSize, squareSize)
+            love.graphics.rectangle("fill", 0, cornerRadius*squareSize, squareSize, (1-2*cornerRadius)*squareSize)
+            love.graphics.circle("fill", cornerRadius*squareSize, cornerRadius*squareSize, cornerRadius*squareSize)
+            love.graphics.circle("fill", cornerRadius*squareSize, (1-cornerRadius)*squareSize, cornerRadius*squareSize)
+        elseif square.shape == "corner" then
+            love.graphics.rectangle("fill", cornerRadius*squareSize, 0, (1-cornerRadius)*squareSize, squareSize)
+            love.graphics.rectangle("fill", 0, cornerRadius*squareSize, squareSize, (1-cornerRadius)*squareSize)
+            love.graphics.circle("fill", cornerRadius*squareSize, cornerRadius*squareSize, cornerRadius*squareSize)
+        elseif square.shape == "full" then
+            love.graphics.rectangle("fill", 0, 0, squareSize, squareSize)
+        end
+        love.graphics.translate(squareSize/2, squareSize/2)
+        love.graphics.rotate(-square.rotation*math.pi/2)
+        love.graphics.translate(-squareSize/2, -squareSize/2)
     end
+    love.graphics.translate(-x, -y)
 end
 function drawField(x0, y0)
     love.graphics.translate(x0, y0)
@@ -362,7 +383,7 @@ function drawCurrentPiece(fieldOffsetX, fieldOffsetY)
     love.graphics.scale(1, -1)
     love.graphics.setColor(pieceColors[currentPiece.color])
     for _,s in pairs(currentPiece.squares) do
-        love.graphics.rectangle("fill", (s.x - 1) * squareSize, (s.y - 1) * squareSize, squareSize, squareSize)
+        drawSquare(s, (s.x - 1) * squareSize, (s.y - 1) * squareSize)
     end
     love.graphics.scale(1, -1)
     love.graphics.translate(-fieldOffsetX, -fieldOffsetY)
