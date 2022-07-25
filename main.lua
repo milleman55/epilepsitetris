@@ -357,6 +357,7 @@ function inCurrentPiece(x, y)
 	return false
 end
 function drawSquare(square, x, y)
+	love.graphics.push()
     love.graphics.translate(x, y)
     if square.type == "shadow" then
 		if not inCurrentPiece(square.x, square.y) then
@@ -368,6 +369,7 @@ function drawSquare(square, x, y)
 		end
     elseif square.type == "normal" then
         love.graphics.translate(squareSize/2, squareSize/2)
+		love.graphics.push()
         love.graphics.rotate(square.rotation*math.pi/2)
         love.graphics.translate(-squareSize/2, -squareSize/2)
         love.graphics.setColor(pieceColors[square.color])
@@ -383,13 +385,12 @@ function drawSquare(square, x, y)
         elseif square.shape == "full" then
             love.graphics.rectangle("fill", 0, 0, squareSize, squareSize)
         end
-        love.graphics.translate(squareSize/2, squareSize/2)
-        love.graphics.rotate(-square.rotation*math.pi/2)
-        love.graphics.translate(-squareSize/2, -squareSize/2)
+		love.graphics.pop()
     end
-    love.graphics.translate(-x, -y)
+	love.graphics.pop()
 end
 function drawField(x0, y0)
+	love.graphics.push()
     love.graphics.translate(x0, y0)
     love.graphics.scale(1, -1)
     love.graphics.setColor(0, 0, 0)
@@ -399,18 +400,17 @@ function drawField(x0, y0)
 			drawSquare(field[i][l], (i-1)*squareSize, (l-1)*squareSize)
         end
     end
-    love.graphics.scale(1, -1)
-    love.graphics.translate(-x0, -y0)
+    love.graphics.pop()
 end
 function drawCurrentPiece(fieldOffsetX, fieldOffsetY)
+	love.graphics.push()
     love.graphics.translate(fieldOffsetX, fieldOffsetY)
     love.graphics.scale(1, -1)
     love.graphics.setColor(pieceColors[currentPiece.color])
     for _,s in pairs(currentPiece.squares) do
         drawSquare(s, (s.x - 1) * squareSize, (s.y - 1) * squareSize)
     end
-    love.graphics.scale(1, -1)
-    love.graphics.translate(-fieldOffsetX, -fieldOffsetY)
+    love.graphics.pop()
 end
 function love.draw()
     local fieldOffsetX = love.graphics.getWidth() / 2 - squareSize * (field.width / 2)
