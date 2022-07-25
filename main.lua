@@ -97,24 +97,25 @@ function movePiece(piece, x, y)
     piece.rotatePointX = currentPiece.rotatePointX + x
     return false
 end
+function setSquareSize()
+	local width = field.width
+	local height = field.height
+	if showScore then
+		width = width + 8
+	end
+	squareSize = math.min(
+		love.graphics.getHeight() / height,
+		love.graphics.getWidth() / width
+	)
+end
 function squareWindow()
-    if showScore == true then
-        if love.graphics.getWidth() / field.width > love.graphics.getHeight() / field.height then
-            squareSize = love.graphics.getHeight() / field.height
-            love.window.updateMode(squareSize * (field.width + 8), love.graphics.getHeight())
-        else
-            squareSize = love.graphics.getWidth() / field.width
-            love.window.updateMode(love.graphics.getWidth() + squareSize * 8, squareSize * field.height)
-        end
-    else
-        if love.graphics.getWidth() / field.width > love.graphics.getHeight() / field.height then
-            squareSize = love.graphics.getHeight() / field.height
-            love.window.updateMode(squareSize * (field.width), love.graphics.getHeight())
-        else
-            squareSize = love.graphics.getWidth() / field.width
-            love.window.updateMode(love.graphics.getWidth(), squareSize * field.height)
-        end
-    end
+	setSquareSize()
+	local width = field.width
+	local height = field.height
+	if showScore then
+		width = width + 8
+	end
+	love.window.updateMode(width*squareSize, height*squareSize)
     text1x = love.graphics.newFont(squareSize)
     text2x = love.graphics.newFont(squareSize * 2)
 end
@@ -200,11 +201,7 @@ function love.load()
     squareWindow() -- Fix window size and aspect ratio
 end
 function love.resize()
-    if love.graphics.getWidth() / (field.width + 8) > love.graphics.getHeight() / field.height then
-        squareSize = love.graphics.getHeight() / field.height
-    else
-        squareSize = love.graphics.getWidth() / (field.width + 8)
-    end
+	setSquareSize()
     text1x = love.graphics.newFont(squareSize)
     text2x = love.graphics.newFont(squareSize * 2)
 end
