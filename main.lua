@@ -144,7 +144,7 @@ function copyPiece(piece)
 	-- Creates a copy of a piece, since Lua tables are always passed by reference
 	local newPiece = {}
 	newPiece.squares = {}
-	for i, s in pairs(piece) do
+	for i, s in ipairs(piece.squares) do
 		newPiece.squares[i] = {
 			x = s.x,
 			y = s.y,
@@ -207,6 +207,17 @@ function love.resize()
     end
     text1x = love.graphics.newFont(squareSize)
     text2x = love.graphics.newFont(squareSize * 2)
+end
+function makeRotatedPiece(piece, direction)
+	local rotatedPiece = copyPiece(piece)
+	for _, s in pairs(rotatedPiece.squares) do
+		local storedX = s.x
+		local storedY = s.y
+		s.x = (-(storedY - rotatedPiece.rotatePointY)) + rotatedPiece.rotatePointX
+		s.y = ((storedX - rotatedPiece.rotatePointX)) + rotatedPiece.rotatePointY
+		s.rotation = (s.rotation + direction) % 4
+	end
+	return rotatedPiece
 end
 function rotateCurrentPiece(direction)
     if direction == 1 then
@@ -458,15 +469,15 @@ function love.draw()
     end
     if showScore == true then
         if gamePaused == false then
-            nextPiecePiece = makePiece(nextPiece, false)
+            nextPiecePiece = makeRotatedPiece(makePiece(nextPiece, false), 1)
             for _,s in pairs(nextPiecePiece.squares) do
-                love.graphics.setColor(pieceColors[nextPiecePiece.color])
-                love.graphics.rectangle("fill", (((-(s.y - math.floor(nextPiecePiece.rotatePointY))) + math.ceil(nextPiecePiece.rotatePointX)) + (field.width / 2 + 1)) * squareSize, ((((s.x - math.ceil(nextPiecePiece.rotatePointX))) + math.ceil(nextPiecePiece.rotatePointY)) - field.height / 2) * squareSize, squareSize, squareSize)
+				drawSquare(s, (s.x + (math.floor(field.width / 2) + 1))*squareSize, (s.y - field.height / 2)*squareSize)
             end
-            for _,s in pairs(heldPiece.squares) do
-                love.graphics.setColor(pieceColors[heldPiece.color])
-                love.graphics.rectangle("fill", (((-(s.y - math.floor(heldPiece.rotatePointY))) + math.ceil(heldPiece.rotatePointX)) + (field.width / 2 + 1)) * squareSize - ((field.width + 4) * squareSize), ((((s.x - math.ceil(heldPiece.rotatePointX))) + math.ceil(heldPiece.rotatePointY)) - field.height / 2) * squareSize, squareSize, squareSize)
-            end
+			if #heldPiece.squares > 0 then
+				for _,s in pairs(makeRotatedPiece(heldPiece, 1).squares) do
+					drawSquare(s, (s.x - math.ceil(field.width/2) - 3) * squareSize, (s.y - field.height / 2)*squareSize)
+				end
+			end
         end
         love.graphics.origin()
         love.graphics.setFont(text1x)
