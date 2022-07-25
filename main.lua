@@ -71,11 +71,11 @@ function newGame() -- (re)sets the game state
         end
     end
 	refreshBag()
-    nextPiece = bag[1]
+    nextPiece = bag[1] -- Get first piece from bag
 	if #bag == 1 then
 		refreshBag()
 	else
-		table.remove(bag, 1) -- Get first piece from bag
+		table.remove(bag, 1)
 	end
     getPiece() -- Create the piece
     updateShadow()
