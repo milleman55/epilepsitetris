@@ -479,7 +479,7 @@ function love.draw()
         love.graphics.origin()
         love.graphics.setFont(text1x)
         love.graphics.setColor(0, 0, 0)
-        love.graphics.translate(love.graphics.getWidth() / 2 + (field.width / 2) * squareSize, love.graphics.getHeight() - squareSize * field.height)
+        love.graphics.translate(fieldOffsetX + field.width*squareSize, fieldOffsetY - field.height*squareSize)
         love.graphics.print("Score", 0, 0)
         love.graphics.print(score, 0, squareSize)
     end
