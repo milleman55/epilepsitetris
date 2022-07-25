@@ -461,15 +461,8 @@ function love.draw()
         drawCurrentPiece(fieldOffsetX, fieldOffsetY)
         love.graphics.translate(fieldOffsetX, fieldOffsetY)
         love.graphics.scale(1, -1)
-    else
-        love.graphics.origin()
-        love.graphics.setFont(text2x)
-        love.graphics.setColor(1, 0, 1)
-        love.graphics.print("Paused", squareSize, squareSize * (field.height / 2 - 3))
-    end
-    if showScore == true then
-        if gamePaused == false then
-            nextPiecePiece = makeRotatedPiece(makePiece(nextPiece, false), 1)
+		if showScore == true then
+			nextPiecePiece = makeRotatedPiece(makePiece(nextPiece, false), 1)
             for _,s in pairs(nextPiecePiece.squares) do
 				drawSquare(s, (s.x + (math.floor(field.width / 2) + 1))*squareSize, (s.y - field.height / 2)*squareSize)
             end
@@ -478,7 +471,14 @@ function love.draw()
 					drawSquare(s, (s.x - math.ceil(field.width/2) - 3) * squareSize, (s.y - field.height / 2)*squareSize)
 				end
 			end
-        end
+		end
+    else
+        love.graphics.origin()
+        love.graphics.setFont(text2x)
+        love.graphics.setColor(1, 0, 1)
+        love.graphics.print("Paused", squareSize, squareSize * (field.height / 2 - 3))
+    end
+    if showScore == true then
         love.graphics.origin()
         love.graphics.setFont(text1x)
         love.graphics.setColor(0, 0, 0)
