@@ -97,21 +97,24 @@ function movePiece(piece, x, y)
     piece.rotatePointX = currentPiece.rotatePointX + x
     return false
 end
+function setSquareSize()
+	squareSize = math.min(
+		love.graphics.getHeight() / field.height,
+		love.graphics.getWidth() / field.width
+	)
+end
 function squareWindow()
+	setSquareSize()
     if showScore == true then
         if love.graphics.getWidth() / field.width > love.graphics.getHeight() / field.height then
-            squareSize = love.graphics.getHeight() / field.height
             love.window.updateMode(squareSize * (field.width + 8), love.graphics.getHeight())
         else
-            squareSize = love.graphics.getWidth() / field.width
             love.window.updateMode(love.graphics.getWidth() + squareSize * 8, squareSize * field.height)
         end
     else
         if love.graphics.getWidth() / field.width > love.graphics.getHeight() / field.height then
-            squareSize = love.graphics.getHeight() / field.height
             love.window.updateMode(squareSize * (field.width), love.graphics.getHeight())
         else
-            squareSize = love.graphics.getWidth() / field.width
             love.window.updateMode(love.graphics.getWidth(), squareSize * field.height)
         end
     end
