@@ -20,7 +20,6 @@ function refreshBag()
 end
 function lockPiece(piece)
     for _,s in pairs(piece.squares) do
-        print(s.x, s.y, s.type)
         field[s.x][s.y] = s
     end
 end
