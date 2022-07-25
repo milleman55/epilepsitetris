@@ -121,7 +121,7 @@ end
 function makePiece(id, isShadow)
     local piece = {}
     piece.squares = {}
-    for i,s in ipairs(pieces[id]) do
+    for i, s in ipairs(pieces[id]) do
         piece.squares[i] = {}
         piece.squares[i].y = s.y + field.height - 2
         piece.squares[i].x = s.x + math.ceil(field.width / 2) - 2
@@ -139,6 +139,26 @@ function makePiece(id, isShadow)
     piece.color = pieces[id].color
     piece.id = id
     return(piece)
+end
+function copyPiece(piece)
+	-- Creates a copy of a piece, since Lua tables are always passed by reference
+	local newPiece = {}
+	newPiece.squares = {}
+	for i, s in pairs(piece) do
+		newPiece.squares[i] = {
+			x = s.x,
+			y = s.y,
+			color = s.color,
+			shape = s.shape,
+			rotation = s.rotation,
+			type = s.type
+		}
+	end
+	newPiece.rotatePointX = piece.rotatePointX
+	newPiece.rotatePointY = piece.rotatePointY
+	newPiece.color = piece.color
+	newPiece.id = piece.id
+	return newPiece
 end
 function love.load()
     pieces = { -- The different tetrominoes
