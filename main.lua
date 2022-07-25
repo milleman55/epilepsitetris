@@ -359,31 +359,36 @@ end
 function drawSquare(square, x, y)
 	love.graphics.push()
     love.graphics.translate(x, y)
+	love.graphics.scale(squareSize)
+	local scaledX = x/squareSize
+	local scaledY = y/squareSize
     if square.type == "shadow" then
 		if not inCurrentPiece(square.x, square.y) then
-			shadowBorderPx = math.ceil(shadowBorder * squareSize)
+			-- Ensure shadow border is equally thick on both sides when scaled
+			shadowBorderPx = math.ceil(shadowBorder*squareSize)/squareSize
+
 			love.graphics.setColor(pieceColors[square.color])
-			love.graphics.rectangle("fill", 0, 0, squareSize, squareSize)
+			love.graphics.rectangle("fill", 0, 0, 1, 1)
 			love.graphics.setColor(0, 0, 0)
-			love.graphics.rectangle("fill", shadowBorderPx, shadowBorderPx, squareSize - 2 * shadowBorderPx, squareSize - 2 * shadowBorderPx)
+			love.graphics.rectangle("fill", shadowBorderPx, shadowBorderPx, 1 - 2*shadowBorderPx, 1 - 2*shadowBorderPx)
 		end
     elseif square.type == "normal" then
-        love.graphics.translate(squareSize/2, squareSize/2)
 		love.graphics.push()
+        love.graphics.translate(0.5, 0.5)
         love.graphics.rotate(square.rotation*math.pi/2)
-        love.graphics.translate(-squareSize/2, -squareSize/2)
+        love.graphics.translate(-0.5, -0.5)
         love.graphics.setColor(pieceColors[square.color])
         if square.shape == "end" then
-            love.graphics.rectangle("fill", cornerRadius*squareSize, 0, (1-cornerRadius)*squareSize, squareSize)
-            love.graphics.rectangle("fill", 0, cornerRadius*squareSize, squareSize, (1-2*cornerRadius)*squareSize)
-            love.graphics.circle("fill", cornerRadius*squareSize, cornerRadius*squareSize, cornerRadius*squareSize)
-            love.graphics.circle("fill", cornerRadius*squareSize, (1-cornerRadius)*squareSize, cornerRadius*squareSize)
+            love.graphics.rectangle("fill", cornerRadius, 0, 1-cornerRadius, 1)
+            love.graphics.rectangle("fill", 0, cornerRadius, 1, 1-2*cornerRadius)
+            love.graphics.circle("fill", cornerRadius, cornerRadius, cornerRadius)
+            love.graphics.circle("fill", cornerRadius, 1-cornerRadius, cornerRadius)
         elseif square.shape == "corner" then
-            love.graphics.rectangle("fill", cornerRadius*squareSize, 0, (1-cornerRadius)*squareSize, squareSize)
-            love.graphics.rectangle("fill", 0, cornerRadius*squareSize, squareSize, (1-cornerRadius)*squareSize)
-            love.graphics.circle("fill", cornerRadius*squareSize, cornerRadius*squareSize, cornerRadius*squareSize)
+            love.graphics.rectangle("fill", cornerRadius, 0, 1-cornerRadius, 1)
+            love.graphics.rectangle("fill", 0, cornerRadius, 1, 1-cornerRadius)
+            love.graphics.circle("fill", cornerRadius, cornerRadius, cornerRadius)
         elseif square.shape == "full" then
-            love.graphics.rectangle("fill", 0, 0, squareSize, squareSize)
+            love.graphics.rectangle("fill", 0, 0, 1, 1)
         end
 		love.graphics.pop()
     end
