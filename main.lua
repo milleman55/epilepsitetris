@@ -103,10 +103,10 @@ function setSquareSize()
 	if showScore then
 		width = width + 8
 	end
-	squareSize = math.min(
+	squareSize = math.floor(math.min(
 		love.graphics.getHeight() / height,
 		love.graphics.getWidth() / width
-	)
+	))
 end
 function squareWindow()
 	setSquareSize()
