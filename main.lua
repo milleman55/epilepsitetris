@@ -188,7 +188,7 @@ function love.resize()
     text1x = love.graphics.newFont(squareSize)
     text2x = love.graphics.newFont(squareSize * 2)
 end
-function rotateHeldPiece(direction)
+function rotateCurrentPiece(direction)
     if direction == 1 then
         canSpin = true
         for _,s in pairs(currentPiece.squares) do
@@ -273,9 +273,9 @@ function love.keypressed(key)
             updateShadow()
             hasHeld = false
         elseif key == "z" then
-            rotateHeldPiece(1)
+            rotateCurrentPiece(1)
         elseif key == "x" then 
-            rotateHeldPiece(-1)
+            rotateCurrentPiece(-1)
         end
     end
     if key == "s" then
