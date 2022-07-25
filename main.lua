@@ -101,18 +101,18 @@ function squareWindow()
     if showScore == true then
         if love.graphics.getWidth() / field.width > love.graphics.getHeight() / field.height then
             squareSize = love.graphics.getHeight() / field.height
-            love.window.setMode(squareSize * (field.width + 8), love.graphics.getHeight(),{resizable=true, vsync=true})
+            love.window.updateMode(squareSize * (field.width + 8), love.graphics.getHeight())
         else
             squareSize = love.graphics.getWidth() / field.width
-            love.window.setMode(love.graphics.getWidth() + squareSize * 8, squareSize * field.height,{resizable=true, vsync=true})
+            love.window.updateMode(love.graphics.getWidth() + squareSize * 8, squareSize * field.height)
         end
     else
         if love.graphics.getWidth() / field.width > love.graphics.getHeight() / field.height then
             squareSize = love.graphics.getHeight() / field.height
-            love.window.setMode(squareSize * (field.width), love.graphics.getHeight(),{resizable=true, vsync=true})
+            love.window.updateMode(squareSize * (field.width), love.graphics.getHeight())
         else
             squareSize = love.graphics.getWidth() / field.width
-            love.window.setMode(love.graphics.getWidth(), squareSize * field.height,{resizable=true, vsync=true})
+            love.window.updateMode(love.graphics.getWidth(), squareSize * field.height)
         end
     end
     text1x = love.graphics.newFont(squareSize)
@@ -169,6 +169,11 @@ function love.load()
         musicEnabled = false
     end
     love.window.setTitle("Tetris!")
+	love.window.setMode(
+		love.graphics.getWidth(),
+		love.graphics.getHeight(),
+		{resizable=true, vsync=true, msaa=16, minwidth=50, minheight=50}
+	)
     love.graphics.setBackgroundColor(1/4, 1/4, 1/4)
     gamePaused = false
     newGame()
