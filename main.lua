@@ -217,51 +217,22 @@ function makeRotatedPiece(piece, direction)
 	return rotatedPiece
 end
 function rotateCurrentPiece(direction)
-    if direction == 1 then
-        canSpin = true
-        for _,s in pairs(currentPiece.squares) do
-            if
-                (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1
-                or (-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width
-                or ((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1
-                or field[(-(s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][((s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].type == "normal"
-            then
-                canSpin = false
-            end
-        end
-        if canSpin == true then
-            for _,s in pairs(currentPiece.squares) do
-                local storedX = s.x
-                local storedY = s.y
-                s.x = (-(storedY - currentPiece.rotatePointY)) + currentPiece.rotatePointX
-                s.y = ((storedX - currentPiece.rotatePointX)) + currentPiece.rotatePointY
-                s.rotation = (s.rotation + 1) % 4
-            end
-            updateShadow()
-        end
-    else
-        canSpin = true
-        for _,s in pairs(currentPiece.squares) do
-            if
-                ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX < 1
-                or ((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX > field.width
-                or (-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY < 1
-                or field[((s.y - currentPiece.rotatePointY)) + currentPiece.rotatePointX][(-(s.x - currentPiece.rotatePointX)) + currentPiece.rotatePointY].type == "normal"
-            then
-                canSpin = false
-            end
-        end
-        if canSpin == true then
-            for _,s in pairs(currentPiece.squares) do
-                local storedX = s.x
-                local storedY = s.y
-                s.x = ((storedY - currentPiece.rotatePointY)) + currentPiece.rotatePointX
-                s.y = (-(storedX - currentPiece.rotatePointX)) + currentPiece.rotatePointY
-                s.rotation = (s.rotation - 1) % 4
-            end
-            updateShadow()
-        end
-    end
+	local rotatedPiece = makeRotatedPiece(currentPiece, direction)
+	canSpin = true
+	for _, s in pairs(rotatedPiece.squares) do
+		if
+			s.x < 1
+			or s.x > field.width
+			or s.y < 1
+			or field[s.x][s.y].type == "normal"
+		then
+			canSpin = false
+		end
+	end
+	if canSpin then
+		currentPiece = rotatedPiece
+		updateShadow()
+	end
 end
 function love.keypressed(key)
     if gameOver == false and gamePaused == false then
