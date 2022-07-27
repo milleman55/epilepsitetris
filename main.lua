@@ -290,11 +290,18 @@ function love.keypressed(key)
         newGame()
     elseif key == "p" then
         gamePaused = not gamePaused
+	elseif key == "down" then
+		-- Prevent pieces dropping multiple squares at once when toggling fast drop
+		t = math.min(t, 0.05)
     end
 end
 function love.update(dt)
+	local dropDelay = 0.75
+	if love.keyboard.isDown("down") then
+		dropDelay = 0.05
+	end
     if gameOver == false and gamePaused == false then
-        if t > 0.75 or (love.keyboard.isDown("down") and t > 0.05) then
+        if t >= dropDelay then
             if movePiece(currentPiece, 0, 1) then
                 lockPiece(currentPiece)
                 checkLines()
@@ -305,7 +312,7 @@ function love.update(dt)
             if love.keyboard.isDown("down") then
                 score = score + 1
             end
-            t = 0
+			t = t - dropDelay
         end
         t = t + dt
     end
