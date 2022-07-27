@@ -180,7 +180,7 @@ function love.load()
         {1,   0,     0   },
         {0,   1,     0   }
     }
-    if love.filesystem.getInfo("tetris.ogg") then
+    if love.filesystem.getInfo("tetris. ogg") then
         musicEnabled = true
         TETRIS = love.audio.newSource("tetris.ogg", "stream") -- Load music file
         volume = 0.17
@@ -210,8 +210,8 @@ function makeRotatedPiece(piece, direction)
 	for _, s in pairs(rotatedPiece.squares) do
 		local storedX = s.x
 		local storedY = s.y
-		s.x = (-(storedY - rotatedPiece.rotatePointY)) + rotatedPiece.rotatePointX
-		s.y = ((storedX - rotatedPiece.rotatePointX)) + rotatedPiece.rotatePointY
+		s.x = -direction*(storedY - rotatedPiece.rotatePointY) + rotatedPiece.rotatePointX
+		s.y = direction*(storedX - rotatedPiece.rotatePointX) + rotatedPiece.rotatePointY
 		s.rotation = (s.rotation + direction) % 4
 	end
 	return rotatedPiece
