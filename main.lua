@@ -172,15 +172,14 @@ function love.load()
         {{x=2, y=2, shape="corner", rotation=3}, {x=2, y=1, shape="corner", rotation=1}, {x=1, y=1, shape="end", rotation=0}, {x=3, y=2, shape="end", rotation=2}, color = 7, rotateX = 2, rotateY = 2}, -- S Piece
     }
     pieceColors = { -- The piece colors
-        {1,   0,     1   },
-        {0.5, 0.667, 1   },
-        {1,   1,     0   },
-        {0,   0,     0.75},
-        {1,   0.667, 0   },
-        {1,   0,     0   },
-        {0,   1,     0   }
-    }
-    if love.filesystem.getInfo("tetris. ogg") then
+        {love.math.random(50, 100)/100, love.math.random(0,50)/100, love.math.random(50, 100)/100},
+        {love.math.random(25,75)/100, love.math.random(38,88)/100, love.math.random(50,100)/100},
+        {love.math.random(50,100)/100,   love.math.random(50,100)/100, love.math.random(0,50)/100},
+        {love.math.random(0,50)/100, love.math.random(0,50)/100, love.math.random(50,100)/100},
+        {love.math.random(50, 100)/100,   love.math.random(25,100)/100, love.math.random(0,50)/100   },
+        {love.math.random(50, 100)/100,   love.math.random(0,50)/100,     love.math.random(0,50)/100   },
+        {love.math.random(0,50)/100,   love.math.random(50, 100)/100,     love.math.random(0,50)/100   }}
+    if love.filesystem.getInfo("tetris.ogg") then
         musicEnabled = true
         TETRIS = love.audio.newSource("tetris.ogg", "stream") -- Load music file
         volume = 0.17
@@ -296,6 +295,14 @@ function love.keypressed(key)
     end
 end
 function love.update(dt)
+	pieceColors = { -- The piece colors
+        {love.math.random(50, 100)/100, love.math.random(0,50)/100, love.math.random(50, 100)/100},
+        {love.math.random(25,75)/100, love.math.random(38,88)/100, love.math.random(50,100)/100},
+        {love.math.random(50,100)/100,   love.math.random(50,100)/100, love.math.random(0,50)/100},
+        {love.math.random(0,50)/100, love.math.random(0,50)/100, love.math.random(50,100)/100},
+        {love.math.random(50, 100)/100,   love.math.random(25,100)/100, love.math.random(0,50)/100   },
+        {love.math.random(50, 100)/100,   love.math.random(0,50)/100,     love.math.random(0,50)/100   },
+        {love.math.random(0,50)/100,   love.math.random(50, 100)/100,     love.math.random(0,50)/100   }}
 	local dropDelay = 0.75
 	if love.keyboard.isDown("down") then
 		dropDelay = 0.05
